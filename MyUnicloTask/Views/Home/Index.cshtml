@@ -1,38 +1,30 @@
-﻿
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
     ViewData["Title"] = "Ana Sehife";
     Layout = "_Layout";
 }
-
 <body>
     <!-- Start Slider Area -->
     <div class="slider__container slider--four">
-        <p style="text-align:center;color:chartreuse;font-size:100px;margin-top:70px">Xos Gelmisiniz</p>
-        <div class="slider__activation__wrap owl-carousel owl-theme">
-            <!-- Start Single Slide -->
-            <div class="slide slider__fixed--height"
-                 style="
-              background: rgba(0, 0, 0, 0) url(images/slider/bg/3.jpg) no-repeat
-                scroll center center / cover;
-            ">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-9 offset-sm-3 col-md-6 offset-md-6 col-lg-5 offset-lg-7">
-                            <div class="slider__content">
-                                <div class="slider__inner">
+        <div class="owl-item active">
+            <div class="slider__activation__wrap owl-carousel owl-theme" style="background: rgba(0, 0, 0, 0) url(../assets/images/slider/bg/3.jpg) no-repeat scroll center center/ cover;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9 offset-sm-3 col-md-6 offset-md-6 col-lg-5 offset-lg-7">
+                        <div class="slider__content">
+                            <div class="slider__inner">
                                     <h1>Awesome Product Collection</h1>
                                     <h4>In 2022</h4>
                                     <div class="slider__btn">
-                                        <a class="htc__btn" href="cart.html">shop now</a>
+                                        <a asp-action="Index" asp-controller="Home">Shop Now</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- End Single Slide -->
-        </div>
+        </div>           
     </div>
     <!-- Start Slider Area -->
     <div class="custop__container bg__cat--2 mt--100">
@@ -42,10 +34,7 @@
                     <div class="col-12">
                         <div class="section__title section__title--2 text-center">
                             <h2 class="title__line">Popular Products</h2>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit sed
-                                do eiusmod temp incididunt ut labore et dolore magna aliqua.
-                            </p>
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod temp incididunt ut labore et dolore magna aliqua. </p>
                         </div>
                     </div>
                 </div>
@@ -588,6 +577,6 @@
                 </div>
             </div>
         </div>
-       
+</div>
 </body>
 </html>

@@ -1,3 +1,6 @@
+using Ab108Uniqlo.DataAccess;
+using Microsoft.EntityFrameworkCore;
+
 namespace Ab108Uniqlo
 {
     public class Program
@@ -8,7 +11,10 @@ namespace Ab108Uniqlo
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddDbContext<UnicloDbContext>(opt =>
+            {
+                opt.UseSqlServer("Server=.\\SQLEXPRESS;Database=Uniqlo;Trusted_Connection=True;TrustServerCertificate=True");
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -28,10 +34,14 @@ namespace Ab108Uniqlo
 
             app.UseAuthorization();
 
-
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
+            name: "areas",
+            pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+          );
 
 
             app.Run();
