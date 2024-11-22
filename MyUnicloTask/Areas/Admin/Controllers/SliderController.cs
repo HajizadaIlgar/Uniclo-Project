@@ -1,44 +1,67 @@
 ﻿using Ab108Uniqlo.DataAccess;
+using Ab108Uniqlo.Models;
 using Ab108Uniqlo.ViewModels.Sliders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ab108Uniqlo.Areas.Admin.Controllers
+namespace Ab108Uniqlo.Areas.Admin.Controllers;
+
+[Area("Admin")]
+public class SliderController(UnicloDbContext _contex, IWebHostEnvironment _env) : Controller
 {
-    [Area("Admin")]
-    public class SliderController : Controller
+    Route["Slider"]
+    public async Task<IActionResult> Index()
+    {
+        return View(await _contex.sliders.ToListAsync());
+    }
+
+    public IActionResult Create()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> Create(SliderCreateVM vm)
     {
 
-        readonly UnicloDbContext _context;
-        public SliderController(UnicloDbContext context)
+        if (!ModelState.IsValid) return View(vm);
+        if (!vm.File.ContentType.StartsWith("image"))
         {
-            _context = context;
+            ModelState.AddModelError("File", "Sekilin olcusu saytimizin formatina uygun deyil");
+            return View(vm);
         }
-        public async Task<IActionResult> Index()
+        if (vm.File.Length > 2 * 1024 * 1024)
         {
-            return View(await _context.sliders.ToListAsync());
+            ModelState.AddModelError("File", "Sekul yukle");
+            return View(vm);
         }
+        string newFileName = Path.GetRandomFileName() + Path.GetExtension(vm.File.FileName);
+        using (Stream stream = System.IO.File.Create(Path.Combine(_env.WebRootPath, "imgs", "sliders", newFileName)))
+        {
+            await vm.File.CopyToAsync(stream);
+        }
+        Slider slider = new Slider
+        {
+            ImageUrl = newFileName,
+            Title = vm.Title,
+            Subtitle = vm.Subtitle,
+            Link = vm.Link,
+        };
+        await _contex.sliders.AddAsync(slider);
+        await _contex.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
 
-        public IActionResult Create()
+    public async Task<IActionResult> Delete(int? id, SliderCreateVM vm)
+    {
+        if (id is null) return BadRequest();
+        var dats = _contex.sliders.Where(x => x.Id == id).FirstOrDefault();
+        string filepath = Path.Combine(_env.WebRootPath, "imgs", "sliders");
+        if (await _contex.sliders.AnyAsync(x => x.Id == id))
         {
-            return View();
+            _contex.sliders.Remove(dats);
+            _contex?.SaveChanges();
         }
-        [HttpPost]
-        public IActionResult Create(SliderCreateVM vm)
-        {
-
-            if (!ModelState.IsValid) return View(vm);
-            if (!vm.File.ContentType.StartsWith("images"))
-            {
-                ModelState.AddModelError("File", "Sekul yukle");
-                return View();
-            }
-            if (vm.File.Length > 2 * 1024 * 2)
-            {
-                ModelState.AddModelError("File", "Sekilin olcusu saytimizin formatina uygun deyil");
-            }
-
-            return View();
-        }
+        return RedirectToAction(nameof(Index));
     }
 }
+

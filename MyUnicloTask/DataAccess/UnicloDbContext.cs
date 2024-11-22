@@ -6,7 +6,8 @@ namespace Ab108Uniqlo.DataAccess
     public class UnicloDbContext : DbContext
     {
         public DbSet<Slider> sliders { get; set; }
-
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Product> Products { get; set; }
         public UnicloDbContext(DbContextOptions opt) : base(opt)
         {
 

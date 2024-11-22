@@ -1,4 +1,5 @@
-﻿
+﻿@using Ab108Uniqlo.Models
+@model List<Slider>
 @{
     ViewData["Title"] = "Index";
 }
@@ -10,18 +11,38 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Title</th>
-                        <th>Subtitle</th>
-                        <th>Link</th>
-                        <th>Image</th>
-                        <th colspan="2">Action</th>
-                    </tr>
-                </thead> 
-            </table>
+            @foreach (var item in Model)
+            {
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>ImageUrl</th>
+                            <th> Title</th>
+                            <th>Subtitle</th>
+                            <th>Link</th>
+                            <td><a asp-controller="Home" class="btn btn-warning mx-1">Bax</a></td>
+                            <td><a class="btn btn-success" asp-controller="Slider" asp-action="Update" asp-route-id="@item.Id">Dəyiş</a></td>
+                        </tr>
+                    </thead>   
+
+                        <thbody>
+                        <tr>
+                            <td>@item.Id</td>
+                            <td><img src="~/imgs/sliders/@item.ImageUrl" width="70" /></td>
+                            <td>@item.Title</td>
+                            <td>@item.Subtitle</td>
+                            <td>@item.Link</td>
+                            <div style="margin-left:670px;display:list-item">
+                            <td><a  asp-controller="Slider" asp-action="Delete" asp-route-id="@item.Id">Sil</a></td>
+                            <td><a class="btn btn-warning" asp-controller="Slider" asp-action="Toggle" asp-route-id="@item.Id">Gizlət</a></td>
+                            </div>
+                        </tr>
+                    </thbody>
+
+                    
+                </table>
+            }
         </div>
     </div>
 </div>

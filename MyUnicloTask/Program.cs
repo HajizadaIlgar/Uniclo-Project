@@ -13,7 +13,7 @@ namespace Ab108Uniqlo
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<UnicloDbContext>(opt =>
             {
-                opt.UseSqlServer("Server=.\\SQLEXPRESS;Database=Uniqlo;Trusted_Connection=True;TrustServerCertificate=True");
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("mssql"));
             });
             var app = builder.Build();
 
