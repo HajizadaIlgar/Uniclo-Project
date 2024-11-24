@@ -1,4 +1,6 @@
-﻿@model SliderCreateVM
+﻿@using Ab108Uniqlo.Models
+@model Slider
+
 @{
     ViewData["Title"] = "Create";
 }
@@ -10,23 +12,23 @@
         <form enctype="multipart/form-data" method="post">
             <div class="form-group">
                 <label asp-for="Title"></label>
-                <input class="form-control" asp-for="Title">
+                <input value="@Model.Title" class="form-control" asp-for="Title">
                 <span class="text-danger" asp-validation-for="Title"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Subtitle"></label>
-                <input class="form-control" asp-for="Subtitle">
+                <input value="@Model.Subtitle" class="form-control" asp-for="Subtitle">
                 <span class="text-danger" asp-validation-for="Subtitle"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Link"></label>
-                <input class="form-control" asp-for="Link">
+                <input value="@Model.Link" class="form-control" asp-for="Link">
                 <span class="text-danger" asp-validation-for="Link"></span>
             </div>
             <div class="form-group">
-                <label asp-for="File"></label>
-                <input class="form-control" asp-for="File">
-                <span class="text-danger" asp-validation-for="File"></span>
+                <label asp-for="ImageUrl"></label>
+                <input value="@Model.ImageUrl" class="form-control" asp-for="ImageUrl">
+                <span class="text-danger" asp-validation-for="ImageUrl"></span>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

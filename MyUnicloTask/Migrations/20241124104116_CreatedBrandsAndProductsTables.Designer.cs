@@ -4,6 +4,7 @@ using Ab108Uniqlo.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ab108Uniqlo.Migrations
 {
     [DbContext(typeof(UnicloDbContext))]
-    partial class UnicloDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241124104116_CreatedBrandsAndProductsTables")]
+    partial class CreatedBrandsAndProductsTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace Ab108Uniqlo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.Product", b =>
@@ -92,35 +95,7 @@ namespace Ab108Uniqlo.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Products", (string)null);
-                });
-
-            modelBuilder.Entity("Ab108Uniqlo.Models.ProductImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("ProductImage", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.Slider", b =>
@@ -157,7 +132,7 @@ namespace Ab108Uniqlo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sliders", (string)null);
+                    b.ToTable("Sliders");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.Product", b =>
@@ -169,25 +144,9 @@ namespace Ab108Uniqlo.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("Ab108Uniqlo.Models.ProductImage", b =>
-                {
-                    b.HasOne("Ab108Uniqlo.Models.Product", "Products")
-                        .WithMany("Images")
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("Ab108Uniqlo.Models.Brand", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Ab108Uniqlo.Models.Product", b =>
-                {
-                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

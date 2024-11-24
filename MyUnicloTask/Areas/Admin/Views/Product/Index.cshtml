@@ -1,13 +1,12 @@
-﻿﻿@{
+﻿@model List<Product>
+@{
     ViewData["Title"] = "Index";
 }
-@model List<Slider>
-
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Sliders</h6>
-        <a class="btn btn-primary" asp-controller="Slider" asp-action="Create">Yarat</a>
+        <h6 class="m-0 font-weight-bold text-primary">Product</h6>
+        <a class="btn btn-primary" asp-controller="Product" asp-action="Create">Yarat</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -16,10 +15,13 @@
                     <tr>
                         <th>Id</th>
                         <th>Image</th>
-                        <th>Title</th>
-                        <th>Subtitle</th>
-                        <th>Link</th>
-                        <th style="text-align:center" colspan="4">Action</th>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>SellPrice</th>
+                        <th>CostPrice</th>
+                        <th>Discount</th>
+                        <th>Stock Count</th>
+                        <th style="text-align:center" colspan="2">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,13 +29,15 @@
                     {
                         <tr>
                             <td>@item.Id</td>
-                            <td><img src="~/imgs/sliders/@item.ImageUrl" width="70" /></td>
-                            <td>@item.Title</td>
-                            <td>@item.Subtitle</td>
-                            <td>@item.Link</td>
+                            <td><img src="~/imgs/products/@item.CoverImage" width="70" /></td>
+                            <td>@item.Name</td>
+                            <td>@item.Brand?</td>
+                            <td>@item.SellPrice</td>
+                            <td>@item.CostPrice</td>
+                            <td>@item.Discount</td>
+                            <td>@item.Quantity</td>
                             <td><a class="btn btn-success" asp-controller="Slider" asp-action="Update" asp-route-id="@item.Id">Dəyiş</a></td>
                             <td><a class="btn btn-danger" asp-controller="Slider" asp-action="Delete" asp-route-id="@item.Id">Sil</a></td>
-                            <td><a class="btn btn-warning" asp-controller="Slider" asp-action="Toggle" asp-route-id="@item.Id">Gizlət</a></td>
                         </tr>
                     }
                 </tbody>

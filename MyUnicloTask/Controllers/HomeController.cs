@@ -9,7 +9,7 @@ namespace Ab108Uniqlo.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _contex.sliders.ToListAsync());
+            return View(await _contex.Sliders.ToListAsync());
         }
 
         public IActionResult About()

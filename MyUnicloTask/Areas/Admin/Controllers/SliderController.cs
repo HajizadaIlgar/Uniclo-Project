@@ -4,17 +4,15 @@ using Ab108Uniqlo.ViewModels.Sliders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ab108Uniqlo.Areas.Admin.Controllers;
+namespace AB108Uniqlo.Areas.Admin.Controllers;
 
 [Area("Admin")]
-public class SliderController(UnicloDbContext _contex, IWebHostEnvironment _env) : Controller
+public class SliderController(UnicloDbContext _context, IWebHostEnvironment _env) : Controller
 {
-    Route["Slider"]
     public async Task<IActionResult> Index()
     {
-        return View(await _contex.sliders.ToListAsync());
+        return View(await _context.Sliders.ToListAsync());
     }
-
     public IActionResult Create()
     {
         return View();
@@ -22,19 +20,19 @@ public class SliderController(UnicloDbContext _contex, IWebHostEnvironment _env)
     [HttpPost]
     public async Task<IActionResult> Create(SliderCreateVM vm)
     {
-
         if (!ModelState.IsValid) return View(vm);
         if (!vm.File.ContentType.StartsWith("image"))
         {
-            ModelState.AddModelError("File", "Sekilin olcusu saytimizin formatina uygun deyil");
+            ModelState.AddModelError("File", "Format type must be image");
             return View(vm);
         }
         if (vm.File.Length > 2 * 1024 * 1024)
         {
-            ModelState.AddModelError("File", "Sekul yukle");
+            ModelState.AddModelError("File", "File size must be less than 2 mb");
             return View(vm);
         }
         string newFileName = Path.GetRandomFileName() + Path.GetExtension(vm.File.FileName);
+
         using (Stream stream = System.IO.File.Create(Path.Combine(_env.WebRootPath, "imgs", "sliders", newFileName)))
         {
             await vm.File.CopyToAsync(stream);
@@ -43,25 +41,59 @@ public class SliderController(UnicloDbContext _contex, IWebHostEnvironment _env)
         {
             ImageUrl = newFileName,
             Title = vm.Title,
-            Subtitle = vm.Subtitle,
-            Link = vm.Link,
+            Subtitle = vm.Subtitle!,
+            Link = vm.Link
         };
-        await _contex.sliders.AddAsync(slider);
-        await _contex.SaveChangesAsync();
+        await _context.Sliders.AddAsync(slider);
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> Delete(int? id, SliderCreateVM vm)
+    public async Task<IActionResult> Update(int? id)
     {
         if (id is null) return BadRequest();
-        var dats = _contex.sliders.Where(x => x.Id == id).FirstOrDefault();
-        string filepath = Path.Combine(_env.WebRootPath, "imgs", "sliders");
-        if (await _contex.sliders.AnyAsync(x => x.Id == id))
+        var data = await _context.Sliders.FindAsync(id.Value);
+        if (data == null) return NotFound();
+        if (data != null) return View(data);
+
+        return View(data);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Update(int? id, Slider data)
+    {
+        if (id is null) return BadRequest();
+
+        var entity = _context.Sliders.Where(x => x.Id == id).FirstOrDefault();
+        if (entity is null) return NotFound();
+        if (entity != null)
         {
-            _contex.sliders.Remove(dats);
-            _contex?.SaveChanges();
+            entity.Title = data.Title;
+            entity.Subtitle = data.Subtitle;
+            entity.Link = data.Link;
+            entity.ImageUrl = data.ImageUrl;
+            _context.SaveChanges();
         }
         return RedirectToAction(nameof(Index));
     }
-}
+    public async Task<IActionResult> Delete(int? id, SliderCreateVM vm)
+    {
+        if (id is null) return BadRequest();
+        var dats = _context.Sliders.Where(x => x.Id == id).FirstOrDefault();
+        string filepath = Path.Combine(_env.WebRootPath, "imgs", "sliders");
+        if (await _context.Sliders.AnyAsync(x => x.Id == id))
+        {
+            _context.Sliders.Remove(dats);
+            await _context?.SaveChangesAsync();
+        }
+        return RedirectToAction(nameof(Index));
+    }
 
+    //public async Task<IActionResult> Toggle(int? id)
+    //{
+    //    var dats = _context.Sliders.Where(x => x.Id == id).FirstOrDefault();
+    //    if (dats != null)
+    //    {
+
+    //    }
+    //}
+}

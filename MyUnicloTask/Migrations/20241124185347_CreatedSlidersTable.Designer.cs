@@ -4,6 +4,7 @@ using Ab108Uniqlo.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ab108Uniqlo.Migrations
 {
     [DbContext(typeof(UnicloDbContext))]
-    partial class UnicloDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241124185347_CreatedSlidersTable")]
+    partial class CreatedSlidersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace Ab108Uniqlo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.Product", b =>
@@ -92,7 +95,7 @@ namespace Ab108Uniqlo.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.ProductImage", b =>
@@ -120,7 +123,7 @@ namespace Ab108Uniqlo.Migrations
 
                     b.HasIndex("ProductsId");
 
-                    b.ToTable("ProductImage", (string)null);
+                    b.ToTable("ProductImage");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.Slider", b =>
@@ -157,7 +160,7 @@ namespace Ab108Uniqlo.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sliders", (string)null);
+                    b.ToTable("Sliders");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.Product", b =>
