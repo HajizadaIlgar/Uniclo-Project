@@ -10,7 +10,6 @@ namespace Ab108Uniqlo.DataAccess
         public DbSet<Product> Products { get; set; }
         public UnicloDbContext(DbContextOptions opt) : base(opt)
         {
-
         }
     }
 }

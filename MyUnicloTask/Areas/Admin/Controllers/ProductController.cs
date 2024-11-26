@@ -68,9 +68,11 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
         Product product = new Product
         {
             Name = vm.Name,
+            CoverImage = productImagePath,
             Description = vm.Description,
             Quantity = vm.Quantity,
             SellPrice = vm.SellPrice,
+            CostPrice = vm.CostPrice,
             Discount = vm.Discount,
             BrandId = vm.BrandId
         };
@@ -92,6 +94,32 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
         await _contex.Products.AddAsync(product);
         await _contex.SaveChangesAsync();
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Update(int? id)
+    {
+        if (id == null) return BadRequest();
+        var data = await _contex.Products.FindAsync(id.Value);
+        if (data is null) return NotFound();
+        return View(data);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Update(int? id, ProductCreateVM product)
+    {
+        if (id == null) return BadRequest();
+        var data = await _contex.Products.Where(x => x.Id == id).FirstOrDefaultAsync();
+        if (data is null) return NotFound();
+        if (data != null)
+        {
+            product.Name = data.Name;
+            product.Description = data.Description;
+            product.Discount = data.Discount;
+            product.CostPrice = data.CostPrice;
+            product.SellPrice = data.SellPrice;
+            product.Quantity = data.Quantity;
+            _contex.SaveChanges();
+        }
         return RedirectToAction(nameof(Index));
     }
 

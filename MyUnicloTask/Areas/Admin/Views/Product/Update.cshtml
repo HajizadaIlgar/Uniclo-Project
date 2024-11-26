@@ -1,0 +1,57 @@
+﻿@using Ab108Uniqlo.Models
+@model Product
+@{
+    ViewData["Titile"] = "Update";
+}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Product create</h6>
+    </div>
+    <div class="card-body">
+        <form enctype="multipart/form-data" method="post">
+            <div class="form-group">
+                <label asp-for="CoverImage"></label>
+                <input accept="image/*" class="form-control" asp-for="CoverImage"></input>
+                <span class="text-danger" asp-validation-for="CoverImage"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input class="form-control" asp-for="Name">
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+           
+            <div class="form-row">
+                <div class="col">
+                    <label asp-for="Brand"></label>
+                    <input  class="form-control" asp-for="Brand">
+                    <span class="text-danger" asp-validation-for="Brand"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                <div class="col">
+                    <label asp-for="SellPrice"></label>
+                    <input class="form-control" asp-for="SellPrice">
+                    <span class="text-danger" asp-validation-for="SellPrice"></span>
+                </div>
+                    <label asp-for="CostPrice"></label>
+                    <input class="form-control" asp-for="CostPrice">
+                    <span class="text-danger" asp-validation-for="CostPrice"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Discount"></label>
+                    <input class="form-control" asp-for="Discount">
+                    <span class="text-danger" asp-validation-for="Discount"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <label asp-for="Quantity"></label>
+                    <input class="form-control" asp-for="Quantity">
+                    <span class="text-danger" asp-validation-for="Quantity"></span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
