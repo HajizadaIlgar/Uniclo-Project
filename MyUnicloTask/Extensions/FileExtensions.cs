@@ -7,7 +7,7 @@ public static class FileExtensions
 
     public static bool IsValidSize(this IFormFile file, int kb)
     {
-        return file.Length <= kb * 1024;
+        return file.Length <= kb * 1024 * 1024;
     }
     public static async Task<string> UploadAsync(this IFormFile file, string filename)
     {

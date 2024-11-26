@@ -88,12 +88,11 @@ public class SliderController(UnicloDbContext _context, IWebHostEnvironment _env
         return RedirectToAction(nameof(Index));
     }
 
-    //public async Task<IActionResult> Toggle(int? id)
-    //{
-    //    var dats = _context.Sliders.Where(x => x.Id == id).FirstOrDefault();
-    //    if (dats != null)
-    //    {
-
-    //    }
-    //}
+    public async Task<IActionResult> Toggle(int? id)
+    {
+        var dats = await _context.Sliders.Where(x => x.Id == id).FirstOrDefaultAsync();
+        dats.IsDeleted = !dats.IsDeleted;
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
 }

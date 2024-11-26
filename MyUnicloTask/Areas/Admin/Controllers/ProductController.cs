@@ -3,7 +3,6 @@ using Ab108Uniqlo.Extensions;
 using Ab108Uniqlo.Models;
 using Ab108Uniqlo.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 namespace Ab108Uniqlo.Areas.Admin.Controllers;
 
@@ -18,7 +17,6 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
     public async Task<IActionResult> Create()
     {
         ViewBag.Categories = await _contex.Brands.Where(x => !x.IsDeleted).ToListAsync();
-        SelectList selectListItems = new SelectList(ViewBag.Categories, "Id", "Name");
         return View();
     }
     [HttpPost]
@@ -39,7 +37,7 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
                 string fileNames = string.Join(',', vm.OtherFile.Where(x => !x.IsValidType("image")).Select(x => x.FileName));
                 ModelState.AddModelError("OtherFiles", fileNames + " is (are) not an image");
             }
-            if (!vm.OtherFile.All(x => x.IsValidSize(400)))
+            if (!vm.OtherFile.All(x => x.IsValidSize(1000)))
             {
                 string fileNames = string.Join(',', vm.OtherFile.Where(x => !x.IsValidSize(400)).Select(x => x.FileName));
                 ModelState.AddModelError("OtherFiles", fileNames + " is (are) bigger than 400kb");
@@ -99,6 +97,7 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
 
     public async Task<IActionResult> Update(int? id)
     {
+        ViewBag.Categories = await _contex.Brands.Where(x => !x.IsDeleted).ToListAsync();
         if (id == null) return BadRequest();
         var data = await _contex.Products.FindAsync(id.Value);
         if (data is null) return NotFound();
@@ -118,9 +117,18 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
             product.CostPrice = data.CostPrice;
             product.SellPrice = data.SellPrice;
             product.Quantity = data.Quantity;
-            _contex.SaveChanges();
+            await _contex.SaveChangesAsync();
         }
         return RedirectToAction(nameof(Index));
     }
 
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null) return BadRequest();
+        dynamic dats = await _contex.Products.FindAsync(id.Value);
+        if (dats is null) return NotFound();
+        _contex.Products.Remove(dats);
+        await _contex.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
 }

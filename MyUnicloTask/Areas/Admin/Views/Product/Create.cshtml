@@ -54,7 +54,7 @@
                     <span class="text-danger" asp-validation-for="Quantity"></span>
                 </div>
                 <div class="col">
-                    <label asp-for="BrandId"></label>
+                    <label asp-for="BrandId">Brands</label>
                     <select class="form-control" asp-for="BrandId" asp-items='new SelectList(ViewBag.Categories,"Id","Name")'>
                         <option>Select Brand</option>
                     </select>

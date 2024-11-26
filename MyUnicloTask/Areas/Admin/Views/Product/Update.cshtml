@@ -11,7 +11,7 @@
         <form enctype="multipart/form-data" method="post">
             <div class="form-group">
                 <label asp-for="CoverImage"></label>
-                <input accept="image/*" class="form-control" asp-for="CoverImage"></input>
+                <input accept="image/*" class="form-control" asp-for="CoverImage">
                 <span class="text-danger" asp-validation-for="CoverImage"></span>
             </div>
             <div class="form-group">
@@ -23,7 +23,9 @@
             <div class="form-row">
                 <div class="col">
                     <label asp-for="Brand"></label>
-                    <input  class="form-control" asp-for="Brand">
+                    <select class="form-control" asp-for="BrandId" asp-items='new SelectList(ViewBag.Categories,"Id","Name")'>
+                        <option>Select Brand</option>
+                    </select>
                     <span class="text-danger" asp-validation-for="Brand"></span>
                 </div>
             </div>
