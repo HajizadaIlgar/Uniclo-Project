@@ -1,4 +1,6 @@
 using Ab108Uniqlo.DataAccess;
+using Ab108Uniqlo.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ab108Uniqlo
@@ -14,6 +16,20 @@ namespace Ab108Uniqlo
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("mssql"));
             });
+            builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
+            {
+                opt.User.RequireUniqueEmail = true;
+                opt.Password.RequiredLength = 8;
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireLowercase = true;
+                opt.Password.RequireUppercase = true;
+                opt.Lockout.MaxFailedAccessAttempts = 1;
+                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(int.MaxValue);
+            }).AddDefaultTokenProviders().AddEntityFrameworkStores<UnicloDbContext>();
+
+
+            //builder.Services.AddSession();
+
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -28,6 +44,7 @@ namespace Ab108Uniqlo
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthorization();
 

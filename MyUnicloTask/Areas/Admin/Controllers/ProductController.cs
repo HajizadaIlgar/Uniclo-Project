@@ -4,6 +4,7 @@ using Ab108Uniqlo.Models;
 using Ab108Uniqlo.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
 namespace Ab108Uniqlo.Areas.Admin.Controllers;
 
 [Area("Admin")]
@@ -82,7 +83,7 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
 
         if (vm.OtherFile != null)
         {
-            product.Images = await Task.WhenAll(vm.OtherFile.Select(async x => new ProductImage
+            product.Images = await Task.WhenAll(vm.OtherFile.Select(async x => new ProductImages
             {
                 Products = product,
                 ImageUrl = await x.UploadAsync(productImagePath)
@@ -95,33 +96,77 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
         return RedirectToAction(nameof(Index));
     }
 
+    //public async Task<IActionResult> Update(int? id)
+    //{
+    //    ViewBag.Categories = await _contex.Brands.Where(x => !x.IsDeleted).ToListAsync();
+    //    if (id == null) return BadRequest();
+    //    var data = await _contex.Products.FindAsync(id.Value);
+    //    if (data is null) return NotFound();
+    //    return View(data);
+    //}
+    //[HttpPost]
     public async Task<IActionResult> Update(int? id)
     {
-        ViewBag.Categories = await _contex.Brands.Where(x => !x.IsDeleted).ToListAsync();
         if (id == null) return BadRequest();
-        var data = await _contex.Products.FindAsync(id.Value);
+        var data = await _contex.Products.Include(x => x.Images)
+            .Where(x => x.Id == id)
+           .Select(x => new ProductUpdateVM
+           {
+               Id = x.Id,
+               Name = x.Name,
+               SellPrice = x.SellPrice,
+               Description = x.Description,
+               CostPrice = x.CostPrice,
+               BrandId = x.BrandId ?? 0,
+               FileUrl = x.CoverImage,
+               Discount = x.Discount,
+               Quantity = x.Quantity,
+               OtherFilesUrl = x.Images.Select(x => x.ImageUrl)
+           }).FirstOrDefaultAsync();
         if (data is null) return NotFound();
+        ViewBag.Categories = await _contex.Brands.Where(x => !x.IsDeleted).ToListAsync();
         return View(data);
     }
     [HttpPost]
-    public async Task<IActionResult> Update(int? id, ProductCreateVM product)
-    {
+    public async Task<IActionResult> Update(int? id, ProductUpdateVM vm)
+    { //burada elave sekili silenden sonra yeni sekil elave etmiyende null reference excpt verir 
         if (id == null) return BadRequest();
-        var data = await _contex.Products.Where(x => x.Id == id).FirstOrDefaultAsync();
+        var data = await _contex.Products
+            .Include(x => x.Images)
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
         if (data is null) return NotFound();
-        if (data != null)
+        data.Images.AddRange(vm.OtherFiles?.Select(x => new ProductImages
         {
-            product.Name = data.Name;
-            product.Description = data.Description;
-            product.Discount = data.Discount;
-            product.CostPrice = data.CostPrice;
-            product.SellPrice = data.SellPrice;
-            product.Quantity = data.Quantity;
+            ImageUrl = x.UploadAsync(Path.Combine(_env.WebRootPath, "imgs", "products"))
+            .Result
+        }).ToList());
+        if (vm.File is null)
+        {
+            data.Id = vm.Id;
+            data.Name = vm.Name;
+            data.SellPrice = vm.SellPrice;
+            data.Description = vm.Description;
+            data.BrandId = vm.BrandId;
+            data.Discount = vm.Discount;
+            data.Quantity = vm.Quantity;
             await _contex.SaveChangesAsync();
         }
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost]
+    public async Task<IActionResult> DeleteImgs(int id, IEnumerable<string> imgnames)
+    {
+        int result = await _contex.ProductImage.Where(x => imgnames.Contains(x.ImageUrl)).ExecuteDeleteAsync();
+        if (result == 0) return NotFound();
+        if (result > 0)
+        {
+            var paths = Path.Combine(_env.WebRootPath, "imgs", "products").FirstOrDefault();
+
+        }
+        return RedirectToAction(nameof(Update), new { id });
+    }
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null) return BadRequest();

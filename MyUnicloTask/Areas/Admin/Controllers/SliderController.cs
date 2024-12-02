@@ -87,10 +87,13 @@ public class SliderController(UnicloDbContext _context, IWebHostEnvironment _env
         }
         return RedirectToAction(nameof(Index));
     }
-
     public async Task<IActionResult> Toggle(int? id)
     {
-        var dats = await _context.Sliders.Where(x => x.Id == id).FirstOrDefaultAsync();
+        if (id is null) return BadRequest();
+        var dats = await _context.Sliders
+            .Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
+        if (dats is null) return NotFound();
         dats.IsDeleted = !dats.IsDeleted;
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
