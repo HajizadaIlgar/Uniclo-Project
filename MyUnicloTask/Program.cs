@@ -1,5 +1,8 @@
 using Ab108Uniqlo.DataAccess;
+using Ab108Uniqlo.Helpers;
 using Ab108Uniqlo.Models;
+using Ab108Uniqlo.Services.Abstracts;
+using Ab108Uniqlo.Services.Implements;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,15 +21,24 @@ namespace Ab108Uniqlo
             });
             builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
             {
-                opt.User.RequireUniqueEmail = true;
-                opt.Password.RequiredLength = 8;
-                opt.Password.RequireDigit = true;
-                opt.Password.RequireLowercase = true;
-                opt.Password.RequireUppercase = true;
-                opt.Lockout.MaxFailedAccessAttempts = 1;
-                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(int.MaxValue);
+                opt.User.RequireUniqueEmail = false;
+                opt.Password.RequiredLength = 3;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+                opt.Lockout.MaxFailedAccessAttempts = 4;
+                //opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(20);
             }).AddDefaultTokenProviders().AddEntityFrameworkStores<UnicloDbContext>();
 
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            var opt = new SmtpOptions();
+            builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection(SmtpOptions.Name));
+            builder.Services.ConfigureApplicationCookie(opt =>
+            {
+                opt.LoginPath = "/login";
+                opt.AccessDeniedPath = "/Home/AccessDenied";
+            });
 
             //builder.Services.AddSession();
 
@@ -39,15 +51,30 @@ namespace Ab108Uniqlo
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-
+            //app.UseUserSeedDatas();
             //statik fayllarimi isletmek ucun 
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseSession();
+            //app.UseSession();
 
             app.UseAuthorization();
 
+
+            app.MapControllerRoute(
+            name: "login",
+            pattern: "login", new
+            {
+                Controller = "Account",
+                Action = "Login"
+            });
+            app.MapControllerRoute(
+           name: "register",
+           pattern: "register", new
+           {
+               Controller = "Account",
+               Action = "Register"
+           });
             app.MapControllerRoute(
             name: "areas",
             pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");

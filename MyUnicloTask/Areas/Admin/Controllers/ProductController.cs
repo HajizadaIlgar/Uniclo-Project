@@ -1,13 +1,17 @@
-﻿using Ab108Uniqlo.DataAccess;
+﻿using Ab108Uniqlo.Constant;
+using Ab108Uniqlo.DataAccess;
 using Ab108Uniqlo.Extensions;
 using Ab108Uniqlo.Models;
 using Ab108Uniqlo.ViewModels.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging;
 namespace Ab108Uniqlo.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Authorize(Roles = RolesConstants.ControllerConst)]
+
 public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex) : Controller
 {
     public async Task<IActionResult> Index()
@@ -104,7 +108,6 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
     //    if (data is null) return NotFound();
     //    return View(data);
     //}
-    //[HttpPost]
     public async Task<IActionResult> Update(int? id)
     {
         if (id == null) return BadRequest();
@@ -136,22 +139,15 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
             .Where(x => x.Id == id)
             .FirstOrDefaultAsync();
         if (data is null) return NotFound();
-        data.Images.AddRange(vm.OtherFiles?.Select(x => new ProductImages
+        if (vm.OtherFiles is not null)
         {
-            ImageUrl = x.UploadAsync(Path.Combine(_env.WebRootPath, "imgs", "products"))
-            .Result
-        }).ToList());
-        if (vm.File is null)
-        {
-            data.Id = vm.Id;
-            data.Name = vm.Name;
-            data.SellPrice = vm.SellPrice;
-            data.Description = vm.Description;
-            data.BrandId = vm.BrandId;
-            data.Discount = vm.Discount;
-            data.Quantity = vm.Quantity;
-            await _contex.SaveChangesAsync();
+            data.Images.AddRange(vm.OtherFiles.Select(x => new ProductImages
+            {
+                ImageUrl = x.UploadAsync(Path.Combine(_env.WebRootPath, "imgs", "products"))
+              .Result
+            }).ToList());
         }
+        await _contex.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
@@ -176,4 +172,5 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
         await _contex.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
+
 }

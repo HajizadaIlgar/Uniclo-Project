@@ -10,7 +10,7 @@ namespace Ab108Uniqlo.DataAccess
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImages> ProductImage { get; set; }
-        public UnicloDbContext(DbContextOptions opt) : base(opt)
-        { }
+        public DbSet<ProductRating> ProductRatings { get; set; }
+        public UnicloDbContext(DbContextOptions opt) : base(opt) { }
     }
 }

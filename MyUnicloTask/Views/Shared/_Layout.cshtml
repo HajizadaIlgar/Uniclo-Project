@@ -27,10 +27,14 @@
     <!-- Modernizr JS -->
     <script src="~/assets/js/vendor/modernizr-3.11.2.min.js"></script>
     @await RenderSectionAsync("style",false)
+    @await RenderSectionAsync("scripts",false)
 </head>
 
 <body >
-        <vc:layout-header></vc:layout-header>
+@*     <vc:layout-header></vc:layout-header>
+    bu sekilde de cagire bilerik
+ *@        
+        @await Component.InvokeAsync("LayoutHeader")
         @RenderBody()
         <!-- Start Footer Area -->
         <footer class="htc__foooter__area bg__cat--2 footer--4">
@@ -42,7 +46,7 @@
                             <div class="ft__widget">
                                 <div class="ft__logo">
                                     <a href="index.html">
-                                        <img src="~/assets/images/logo/uniqlo.png" alt="footer logo">
+                                        <img  alt="footer logo">
                                     </a>
                                 </div>
                                 <div class="footer__details">
@@ -140,7 +144,7 @@
                             <!-- Start product images -->
                             <div class="product-images">
                                 <div class="main-image images">
-                                    <img alt="big images" src="~/assets/images/product/big-img/1.jpg">
+                                    <img alt="big images" src="~/assets/images/big-img/1.jpg">
                                 </div>
                             </div>
                             <!-- end product images -->

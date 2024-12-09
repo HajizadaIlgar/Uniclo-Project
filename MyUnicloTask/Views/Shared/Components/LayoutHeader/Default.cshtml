@@ -1,5 +1,5 @@
-﻿
-    <!--[if lt IE 8]>
+﻿@model List<BasketItemVM>
+<!--[if lt IE 8]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <!-- Body main wrapper start -->
@@ -22,10 +22,7 @@
                             <nav class="mainmenu__nav d-none d-lg-block">
                                 <ul class="main__menu">
                                     <li class="drop">
-                                        <a asp-action="Index" asp-controller="Home">
-                                            Home
-
-                                        </a>
+                                        <a asp-action="Index" asp-controller="Home"> Home </a>
 
                                         <ul class="dropdown">
                                             <li><a href="index.html">Home 1</a></li>
@@ -39,14 +36,9 @@
                                             <li><a href="index-9.html">Home 9</a></li>
                                             <li><a href="index-10.html">Home 10</a></li>
                                         </ul>
-                                    </li>
-
                                     <li><a asp-action="About" asp-controller="Home">About </a></li>
-
-                                    </li>
-
-
-                                    <li><a asp-action="Contact" asp-controller="Home">contact</a></li>
+                                    <li><a asp-action="Index" asp-controller="Shop">Shop</a></li>
+                                    <li><a asp-action="Contact" asp-controller="Home">Contact</a></li>
                                 </ul>
                             </nav>
                             <div class="mobile-menu clearfix  d-block d-lg-none">
@@ -74,9 +66,23 @@
                         <!-- End MAinmenu Ares -->
                         <div class="col-md-2 col-lg-2 col-6">
                             <ul class="menu-extra">
-
-                                <li><a href="login-register.html"><span class="ti-user"></span></a></li>
-                                <li class="cart__menu"><span class="ti-shopping-cart"></span></li>
+                                @if (Context.User.Identity.IsAuthenticated)
+                                    {
+                                        <li>
+                                            <a asp-action="Logout" asp-controller="Account">
+                                                <span class="ti-back-left"></span>
+                                            </a>
+                                        </li>
+                                    }
+                                else
+                                    {
+                                        <li>
+                                            <a asp-action="Login" asp-controller="Account">
+                                                <span class="ti-user"></span>
+                                            </a>
+                                        </li>
+                                    }
+                            <li class="cart__menu"><span class="ti-shopping-cart"></span></li>
                                 <li class="toggle__menu d-none d-md-block"><span class="ti-menu"></span></li>
                             </ul>
                         </div>
@@ -171,6 +177,8 @@
             <!-- End Offset MEnu -->
             <!-- Start Cart Panel -->
             <div class="shopping__cart">
+                @foreach (var item in Model)
+                    {
                 <div class="shopping__cart__inner">
                     <div class="offsetmenu__close__btn">
                         <a href="#"><i class="zmdi zmdi-close"></i></a>
@@ -178,44 +186,37 @@
                     <div class="shp__cart__wrap">
                         <div class="shp__single__product">
                             <div class="shp__pro__thumb">
-                                <a href="#">
-                                    <img src="images/product/sm-img/1.jpg" alt="product images">
+                                <a asp-controller="Shop" asp-action="Detail" asp-route-id="@item.Id">
+                                    <img src="~/imgs/products/@item.ImgUrl" alt="product images">
                                 </a>
                             </div>
                             <div class="shp__pro__details">
-                                <h2><a href="product-details.html">BO&Play Wireless Speaker</a></h2>
-                                <span class="quantity">QTY: 1</span>
-                                <span class="shp__price">$105.00</span>
+                                <h2><a href="product-details.html">@item.Name</a></h2>
+                                <span class="quantity">QTY: @item.Count </span>
+                                <span class="shp__price">@item.SellPrice</span>
                             </div>
                             <div class="remove__btn">
-                                <a href="#" title="Remove this item"><i class="zmdi zmdi-close"></i></a>
-                            </div>
-                        </div>
-                        <div class="shp__single__product">
-                            <div class="shp__pro__thumb">
-                                <a href="#">
-                                    <img src="images/product/sm-img/2.jpg" alt="product images">
-                                </a>
-                            </div>
-                            <div class="shp__pro__details">
-                                <h2><a href="product-details.html">Brone Candle</a></h2>
-                                <span class="quantity">QTY: 1</span>
-                                <span class="shp__price">$25.00</span>
-                            </div>
-                            <div class="remove__btn">
-                                <a href="#" title="Remove this item"><i class="zmdi zmdi-close"></i></a>
+                                <a asp-controller="Shop" asp-action="BasketDelete" asp-route-id="@item.Id"><i class="zmdi zmdi-close"></i></a>
                             </div>
                         </div>
                     </div>
                     <ul class="shoping__total">
                         <li class="subtotal">Subtotal:</li>
-                        <li class="total__price">$130.00</li>
+                        @if (item.Discount>0)
+                        {                            
+                            <li class="total__price">@((item.SellPrice - item.SellPrice * item.Discount / 100)*(item.Discount))</li>
+                        }
+                        else
+                        {
+                            <li class="total__price">@(item.SellPrice)</li>
+                        }
                     </ul>
                     <ul class="shopping__btn">
                         <li><a href="cart.html">View Cart</a></li>
                         <li class="shp__checkout"><a href="checkout.html">Checkout</a></li>
                     </ul>
                 </div>
+                    } 
             </div>
             <!-- End Cart Panel -->
         </div>

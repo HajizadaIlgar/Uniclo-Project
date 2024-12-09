@@ -1,12 +1,14 @@
 ﻿using Ab108Uniqlo.DataAccess;
 using Ab108Uniqlo.Models;
 using Ab108Uniqlo.ViewModels.Brands;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ab108Uniqlo.Areas.Admin.Controllers;
 [Area("Admin")]
+[Authorize]
 public class BrandController(UnicloDbContext _contex, IWebHostEnvironment _env) : Controller
 {
     public IActionResult Index()

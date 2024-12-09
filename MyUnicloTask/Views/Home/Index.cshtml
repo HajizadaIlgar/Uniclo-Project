@@ -1,9 +1,9 @@
 ﻿@model HomeVM
 @{
     ViewData["Title"] = "Ana səhifə";
-    Layout = "_Layout";
 } 
-       <!-- Start Slider Area -->
+    
+    <!-- Start Slider Area -->
         <div class="slider__container slider--four">
             <div class="slider__activation__wrap owl-carousel owl-theme">
                 @foreach (var item in Model.Sliders)
@@ -46,11 +46,11 @@
                             <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                                 <div class="filter__menu__container">
                                     <div class="product__menu">
-                                        <button data-filter="*"  class="is-checked">All</button>
-                                        <button data-filter=".cat--1">Furnitures</button>
-                                        <button data-filter=".cat--2">Bags</button>
-                                        <button data-filter=".cat--3">Decoration</button>
-                                        <button data-filter=".cat--4">Accessories</button>
+                                                  <button data-filter="*"  class="is-checked">All</button>
+                                        @foreach (var item in Model.Brands)
+                                            {
+                                                     <button data-filter=".cat--@item.Id">@item.Name</button>
+                                            }                                      
                                     </div>
                                     <div class="filter__box">
                                         <a class="filter__menu" href="#/">filter</a>
@@ -133,15 +133,15 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="popular__product__container product__list clearfix">
-                                    @foreach (var item in Model.Products)
+                                    @foreach (var item in Model.PupolarProducts)
                                         {
                                 
                                         <!-- Start Single Product -->
-                                        <div class="single__pro">
+                                        <div class="single__pro cat--@item.BrandId">
                                             <div class="product">
                                                 <div class="product__inner">
                                                     <div class="pro__thumb">
-                                                        <a asp-action="Detail" asp-controller="Product" asp-route-id="@item.Id">
+                                                <a asp-action="Detail" asp-controller="Shop" asp-route-id="@item.Id">
                                                             <img src="~/imgs/products/@item.CoverImage" alt="product images">
                                                         </a>
                                                     </div>
@@ -153,7 +153,7 @@
                                             </div>
                                                 </div>
                                                 <div class="product__details" style="color:black">
-                                                    <h2 style="color:burlywood"><a asp-action="Detail" asp-controller="Product" asp-route-id="@item.Id">@item.Name</a></h2>
+                                                    <h2 style="color:burlywood"><a asp-action="Detail" asp-controller="Shop" asp-route-id="@item.Id">@item.Name</a></h2>
                                             @if (item.Discount > 0)
                                             {
                                                 <del class="old_prize text-secondary">$@item.SellPrice</del>

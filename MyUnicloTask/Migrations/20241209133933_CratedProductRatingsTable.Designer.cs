@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ab108Uniqlo.Migrations
 {
     [DbContext(typeof(UnicloDbContext))]
-    [Migration("20241202172136_CreatedIdentityTable")]
-    partial class CreatedIdentityTable
+    [Migration("20241209133933_CratedProductRatingsTable")]
+    partial class CratedProductRatingsTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,6 @@ namespace Ab108Uniqlo.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Fullname")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -199,6 +198,32 @@ namespace Ab108Uniqlo.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("ProductImage");
+                });
+
+            modelBuilder.Entity("Ab108Uniqlo.Models.ProductRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RatingRate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProductRatings");
                 });
 
             modelBuilder.Entity("Ab108Uniqlo.Models.Slider", b =>
@@ -391,6 +416,23 @@ namespace Ab108Uniqlo.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("Ab108Uniqlo.Models.ProductRating", b =>
+                {
+                    b.HasOne("Ab108Uniqlo.Models.Product", "Product")
+                        .WithMany("ProductRatings")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ab108Uniqlo.Models.AppUser", "User")
+                        .WithMany("ProductRatings")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -442,6 +484,11 @@ namespace Ab108Uniqlo.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Ab108Uniqlo.Models.AppUser", b =>
+                {
+                    b.Navigation("ProductRatings");
+                });
+
             modelBuilder.Entity("Ab108Uniqlo.Models.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -450,6 +497,8 @@ namespace Ab108Uniqlo.Migrations
             modelBuilder.Entity("Ab108Uniqlo.Models.Product", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("ProductRatings");
                 });
 #pragma warning restore 612, 618
         }

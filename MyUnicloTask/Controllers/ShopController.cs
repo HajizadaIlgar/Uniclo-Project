@@ -5,6 +5,7 @@ using Ab108Uniqlo.ViewModels.Products;
 using Ab108Uniqlo.ViewModels.Shops;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
 
 
@@ -66,12 +67,54 @@ public class ShopController(UnicloDbContext _contex) : Controller
         }
         string data = JsonSerializer.Serialize(basket);
         HttpContext.Response.Cookies.Append("basket", data);
-        return Ok();
+        return RedirectToAction("Index", "Home");
     }
+
     public async Task<IActionResult> GetBasket(int id)
     {
 
         return Json(getBasket());
+    }
+    public async Task<IActionResult> Detail(int? id)
+    {
+        if (id is null) return BadRequest();
+        var datas = await _contex.Products.Include(x => x.Images).Include(x => x.ProductRatings)
+            .Where(s => s.Id == id.Value && !s.IsDeleted).FirstOrDefaultAsync();
+        if (datas is null) return NotFound();
+        string? userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (userId is not null)
+        {
+            var rating = await _contex.ProductRatings.Where(x => x.UserId == userId && x.ProductId == id).Select(x => x.RatingRate).FirstOrDefaultAsync();
+            ViewBag.Rating = rating == 0 ? 5 : rating;
+        }
+        else
+        {
+            ViewBag.Rating = 5;
+        }
+        await _contex.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    public async Task<IActionResult> Rate(int? productId, int rate = 1)
+    {
+        if (!productId.HasValue) return BadRequest();
+        string userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
+        if (!await _contex.Products.AnyAsync(s => s.Id == productId)) return NotFound();
+        var rating = await _contex.ProductRatings.Where(x => x.ProductId == productId && x.UserId == userId).FirstOrDefaultAsync();
+        if (rating is null)
+        {
+            await _contex.AddAsync(new Models.ProductRating
+            {
+                ProductId = productId.Value,
+                UserId = userId,
+                RatingRate = rate
+            });
+        }
+        else
+        {
+            rating.RatingRate = rate;
+        }
+        await _contex.SaveChangesAsync();
+        return RedirectToAction(nameof(Detail), new { id = productId });
     }
     List<BasketCookieItemVM> getBasket()
     {
@@ -83,8 +126,17 @@ public class ShopController(UnicloDbContext _contex) : Controller
         }
         catch (Exception)
         {
-
             return new();
         }
+    }
+    public async Task<IActionResult> BasketDelete(int? id)
+    {
+        if (id is null) return BadRequest();
+        var dats = await _contex.Products.Where(x => x.Id == id)
+            .FirstOrDefaultAsync();
+        if (dats is null) return NotFound();
+        _contex.Products.Remove(dats);
+        await _contex.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
     }
 }

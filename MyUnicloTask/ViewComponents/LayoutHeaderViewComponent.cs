@@ -28,7 +28,7 @@ namespace Ab108Uniqlo.ViewComponents
             {
                 item.Count = basket.First(x => x.Id == item.Id).Count;
             }
-            return View();
+            return View(basketItems);
         }
     }
 }

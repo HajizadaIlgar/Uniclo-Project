@@ -1,17 +1,22 @@
-﻿using Ab108Uniqlo.DataAccess;
+﻿using Ab108Uniqlo.Constant;
+using Ab108Uniqlo.DataAccess;
 using Ab108Uniqlo.Models;
 using Ab108Uniqlo.ViewModels.Sliders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AB108Uniqlo.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Authorize(Roles = RolesConstants.ControllerConst)]
+
 public class SliderController(UnicloDbContext _context, IWebHostEnvironment _env) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Sliders.ToListAsync());
+        return View(await _context.Sliders.Where(x => !x.IsDeleted)
+            .ToListAsync());
     }
     public IActionResult Create()
     {
