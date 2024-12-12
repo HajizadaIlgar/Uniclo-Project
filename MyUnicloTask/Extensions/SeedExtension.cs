@@ -7,7 +7,7 @@ namespace Ab108Uniqlo.Extensions
 {
     public static class SeedExtension
     {
-        public static void UseUserSeedDatas(this IApplicationBuilder app)
+        public static void UseUserSeed(this IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
@@ -27,6 +27,7 @@ namespace Ab108Uniqlo.Extensions
                 user.UserName = "admin";
                 user.Email = "admin@gmail.com";
                 user.Fullname = "admin";
+                user.EmailConfirmed = true;
                 string role = nameof(Roles.Admin);
                 await _userManager.CreateAsync(user, "123");
                 await _userManager.AddToRoleAsync(user, role);

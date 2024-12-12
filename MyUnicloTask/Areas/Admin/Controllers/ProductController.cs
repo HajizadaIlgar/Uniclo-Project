@@ -2,6 +2,7 @@
 using Ab108Uniqlo.DataAccess;
 using Ab108Uniqlo.Extensions;
 using Ab108Uniqlo.Models;
+using Ab108Uniqlo.ViewModels.Commons;
 using Ab108Uniqlo.ViewModels.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,14 @@ namespace Ab108Uniqlo.Areas.Admin.Controllers;
 
 public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex) : Controller
 {
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? page = 1, int? take = 4)
     {
-        return View(await _contex.Products.Include(x => x.Brand).ToListAsync());
+        if (page == null) page = 1;
+        if (!take.HasValue) take = 4;
+        var query = _contex.Products.Include(x => x.Brand).AsQueryable();
+        var data = await query.Skip(take.Value * page.Value - 1).Take(take.Value).ToListAsync();
+        ViewBag.PaginationItems = new PaginationItemsVM(await query.CountAsync(), take.Value, page.Value);
+        return View(data);
     }
 
     public async Task<IActionResult> Create()
@@ -147,7 +153,19 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
               .Result
             }).ToList());
         }
-        await _contex.SaveChangesAsync();
+        if (vm.File is not null)
+        {
+            vm.Id = data.Id;
+            vm.Name = data.Name;
+            vm.SellPrice = data.SellPrice;
+            vm.Description = data.Description;
+            vm.CostPrice = data.CostPrice;
+            vm.BrandId = data.BrandId ?? 0;
+            vm.FileUrl = data.CoverImage;
+            vm.Discount = data.Discount;
+            vm.Quantity = data.Quantity;
+            await _contex.SaveChangesAsync();
+        }
         return RedirectToAction(nameof(Index));
     }
 

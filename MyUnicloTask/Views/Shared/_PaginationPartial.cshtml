@@ -1,0 +1,53 @@
+﻿@model PaginationItemsVM
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @if (Model.ActivePage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-take="@Model.Take" asp-route-page="@(Model.ActivePage>1 ? Model.ActivePage-1 : 1 )" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+        }
+        <li class="page-item @(1==Model.ActivePage ? "active" :"")">
+            <a class="page-link" asp-route-take="@Model.Take"
+               asp-route-page="@Model.PageCount-1">
+                1
+            </a>
+        </li>
+        @if (Model.ActivePage + 1 < Model.PageCount - 1)
+        {
+            <li class="page-item">
+                <a class="page-link disabled" href="#">...</a>
+            </li>
+        }
+        @for (int i = Math.Max(Model.ActivePage - 1, 2); i <= Math.Min(Model.ActivePage + 1, Model.PageCount - 1); i++)
+        {
+            <li class="page-item @(i==Model.ActivePage ? "active" : "")">
+                <a class="page-link" asp-route-take="@Model.Take" asp-route-page="@i">@i</a>
+            </li>
+        }
+        @if (Model.ActivePage + 1 < Model.PageCount - 1)
+        {
+            <li class="page-item">
+                <a class="page-link disabled" href="#">...</a>
+            </li>
+        }
+        <li class="page-item @(Model.PageCount==Model.ActivePage ? "active" :"")">
+            <a class="page-link" asp-route-take="@Model.Take"
+               asp-route-page="@Model.PageCount">
+                @Model.PageCount
+            </a>
+        </li>
+        @if (Model.ActivePage < Model.PageCount)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-take="@Model.Take" asp-route-page="@(Model.ActivePage<Model.PageCount ? Model.ActivePage+1:Model.PageCount)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

@@ -43,7 +43,7 @@
                             <td><a class="btn btn-success" asp-controller="Slider" asp-action="Update" asp-route-id="@item.Id">Dəyiş</a></td>
                             <td><a class="btn btn-danger" asp-controller="Slider" asp-action="Delete" asp-route-id="@item.Id">Sil</a></td> 
                             @{
-                                string ButtonSituation = !item.IsDeleted ? "Goster" : "Gizlet";
+                                string ButtonSituation = !item.IsDeleted ? "Gizlet" : "Goster";
                                 string ColorSituation = !item.IsDeleted ? "btn btn-warning" : "btn btn-secondary";
                             }
                             <td><a  class=@ColorSituation asp-controller="Slider" asp-action="Toggle" asp-route-id="@item.Id">@ButtonSituation</a></td>
@@ -52,5 +52,6 @@
                 </tbody>
             </table>
         </div>
+        <partial name="_PaginationPartial" model="@(ViewBag.Pagination  as PaginationItemsVM)"></partial>
     </div>
 </div>

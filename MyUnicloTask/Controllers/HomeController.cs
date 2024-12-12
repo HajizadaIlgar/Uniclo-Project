@@ -13,7 +13,7 @@ namespace Ab108Uniqlo.Controllers
         public async Task<IActionResult> Index()
         {
             HomeVM homeVM = new HomeVM();
-            homeVM.Sliders = await _contex.Sliders
+            homeVM.Sliders = await _contex.Sliders.Where(x => !x.IsDeleted)
                 .Select(x => new SliderListItemVM
                 {
                     ImageUrl = x.ImageUrl,

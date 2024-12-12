@@ -92,7 +92,7 @@ public class ShopController(UnicloDbContext _contex) : Controller
             ViewBag.Rating = 5;
         }
         await _contex.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
+        return View(datas);
     }
     public async Task<IActionResult> Rate(int? productId, int rate = 1)
     {

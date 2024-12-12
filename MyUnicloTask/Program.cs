@@ -54,13 +54,10 @@ namespace Ab108Uniqlo
             //app.UseUserSeedDatas();
             //statik fayllarimi isletmek ucun 
             app.UseStaticFiles();
-
             app.UseRouting();
             //app.UseSession();
 
             app.UseAuthorization();
-
-
             app.MapControllerRoute(
             name: "login",
             pattern: "login", new

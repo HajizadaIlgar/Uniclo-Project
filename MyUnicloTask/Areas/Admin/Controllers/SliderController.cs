@@ -1,6 +1,7 @@
 ﻿using Ab108Uniqlo.Constant;
 using Ab108Uniqlo.DataAccess;
 using Ab108Uniqlo.Models;
+using Ab108Uniqlo.ViewModels.Commons;
 using Ab108Uniqlo.ViewModels.Sliders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,10 @@ namespace AB108Uniqlo.Areas.Admin.Controllers;
 
 public class SliderController(UnicloDbContext _context, IWebHostEnvironment _env) : Controller
 {
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? page = 1, int? take = 4)
     {
-        return View(await _context.Sliders.Where(x => !x.IsDeleted)
-            .ToListAsync());
+        ViewBag.Pagination = new PaginationItemsVM(await _context.Sliders.CountAsync(), take.Value, page.Value);
+        return View(await _context.Sliders.Skip((page.Value - 1) * take.Value).Take(take.Value).ToListAsync());
     }
     public IActionResult Create()
     {

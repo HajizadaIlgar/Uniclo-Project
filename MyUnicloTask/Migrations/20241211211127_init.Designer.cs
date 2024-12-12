@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ab108Uniqlo.Migrations
 {
     [DbContext(typeof(UnicloDbContext))]
-    [Migration("20241209133933_CratedProductRatingsTable")]
-    partial class CratedProductRatingsTable
+    [Migration("20241211211127_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

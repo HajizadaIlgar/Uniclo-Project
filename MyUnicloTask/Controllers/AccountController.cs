@@ -6,6 +6,7 @@ using Ab108Uniqlo.Views.Account.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace Ab108Uniqlo.Controllers;
 
@@ -13,20 +14,19 @@ public class AccountController(UserManager<AppUser> _userManager, SignInManager<
 {
     public async Task<IActionResult> Send()
     {
-        //    SmtpClient client = new SmtpClient();
-        //    client.Host = "smtp.gmail.com";
-        //    client.Port = 587;
-        //    client.EnableSsl = true;
-        //    client.UseDefaultCredentials = false;
-        //    client.Credentials = new NetworkCredential("ilgarh-ab108@code.edu.az", "o s z s m o l z r n t t f m h c");
-        //    MailAddress from = new MailAddress("ilgarh-ab108@code.edu.az", "Uniqlo");
-        //    MailAddress to = new MailAddress("revanhacizade865@gmail.com\r\n");
-        //    MailMessage message = new MailMessage(from, to);
-        //    message.Subject = "kjdnskjbvsjk";
-        //    message.Body = "<p>jksdjn ndkjsdnsdkn dvjnsnv nkjv</p>";
-        //    message.IsBodyHtml = true;
-        //    client.Send(message);
-        _service.SendAsync().Wait();
+        /* SmtpClient client = new SmtpClient();
+             client.Host = "smtp.gmail.com";
+        client.Port = 587;
+        client.EnableSsl = true;
+        client.UseDefaultCredentials = false;
+        client.Credentials = new NetworkCredential("ilgarh-ab108@code.edu.az", "o s z s m o l z r n t t f m h c");
+        MailAddress from = new MailAddress("ilgarh-ab108@code.edu.az", "Uniqlo");
+        MailAddress to = new MailAddress("revanhacizade865@gmail.com\r\n");
+        MailMessage message = new MailMessage(from, to);
+        message.Subject = "kjdnskjbvsjk";
+        message.Body = "<p>jksdjn ndkjsdnsdkn dvjnsnv nkjv</p>";
+        message.IsBodyHtml = true;
+        client.Send(message);*/
         return Ok();
     }
     private bool IsAuthenticated => HttpContext.User.Identity?.IsAuthenticated ?? false;
@@ -65,16 +65,18 @@ public class AccountController(UserManager<AppUser> _userManager, SignInManager<
             }
             return View();
         }
-        return RedirectToAction(nameof(Login));
+        string token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+        _service.SendEmailConfirmationAsync(appUser.Email, appUser.UserName, token);
+        return Content("Email Snet");
     }
-    //public async Task<IActionResult> MyRolesMethod()
-    //{
-    //    foreach (Roles item in Enum.GetValues(typeof(Roles)))
-    //    {
-    //        await _roleManager.CreateAsync(new IdentityRole(item.GetRole()));
-    //    }
-    //    return Ok();
-    //}
+    public async Task<IActionResult> MyRolesMethod()
+    {
+        foreach (Roles item in Enum.GetValues(typeof(Roles)))
+        {
+            await _roleManager.CreateAsync(new IdentityRole(item.GetRole()));
+        }
+        return Ok();
+    }
     public IActionResult Login()
     {
         return View();
@@ -124,6 +126,23 @@ public class AccountController(UserManager<AppUser> _userManager, SignInManager<
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
+        return RedirectToAction(nameof(Login));
+    }
+    public async Task<IActionResult> VerifyEmail(string token, string user)
+    {
+        var entitiy = await _userManager.FindByNameAsync(user);
+        if (entitiy is null) return BadRequest();
+        var result = await _userManager.ConfirmEmailAsync(entitiy, token.Replace(' ', '+'));
+        if (result.Succeeded)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in result.Errors)
+            {
+                sb.Append(item.ToString());
+                return Content(sb.ToString());
+            }
+        }
+        await _signInManager.SignInAsync(entitiy, true);
         return RedirectToAction(nameof(Login));
     }
 }
