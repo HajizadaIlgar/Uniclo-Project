@@ -82,16 +82,20 @@
                         <p>@Model.Description</p>
                     </div>
                     <ul class="pro__dtl__prize">
-                        @if (Model.Discount>0)
+                        @{
+                            var currencySymbol = Model.Currency?.Name == "USD" ? "$" : "₼"; 
+                        }
+                        @if (Model.Discount > 0)
                         {
-                        <li class="old__prize">@Model.SellPrice</li>
-                            <li>@(Model.SellPrice-(Model.SellPrice*Model.Discount/100))</li>
+                            <li class="old__prize">@Model.SellPrice @currencySymbol</li>
+                            <li>@(Model.SellPrice - (Model.SellPrice * Model.Discount / 100)) @currencySymbol</li>
                         }
                         else
                         {
-                            <li class="new__prize">@Model.SellPrice</li>
+                            <li class="new__prize">@Model.SellPrice @currencySymbol</li>
                         }
                     </ul>
+
                  @*    <div class="pro__dtl__color">
                         <h2 class="title__5">Choose Colour</h2>
                         <ul class="pro__choose__color">
@@ -208,25 +212,21 @@
                                     <img src="images/review/1.jpg" alt="review images">
                                 </div>
                                 <div class="review__details">
-                                    <div class="review__info">
-                                        <h4><a href="#">Gerald Barnes</a></h4>
-                                        <ul class="rating">
-                                            <li><i class="zmdi zmdi-star"></i></li>
-                                            <li><i class="zmdi zmdi-star"></i></li>
-                                            <li><i class="zmdi zmdi-star"></i></li>
-                                            <li><i class="zmdi zmdi-star-half"></i></li>
-                                            <li><i class="zmdi zmdi-star-half"></i></li>
-                                        </ul>
-                                        <div class="rating__send">
-                                            <a href="#"><i class="zmdi zmdi-mail-reply"></i></a>
-                                            <a href="#"><i class="zmdi zmdi-close"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="review__date">
-                                        <span>27 Jun, 2022 at 2:30pm</span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer accumsan egestas elese ifend. Phasellus a felis at estei to bibendum feugiat ut eget eni Praesent et messages in con sectetur posuere dolor non.</p>
-                                </div>
+                                    @foreach (var item in Model.ProductComments)
+                                        {
+                                            <div class="review__info">
+                                                <h4><a href="#">@item.Content</a></h4>
+                                                <div class="rating__send">
+                                                    <a href="#"><i class="zmdi zmdi-mail-reply"></i></a>
+                                                    <a href="#"><i class="zmdi zmdi-close"></i></a>
+                                                </div>
+                                            </div>
+                                                <div class="review__date">
+                                                    <span>@item.CreatedTime</span>
+                                                </div>
+                                                <p>@item.Content</p>
+                                        }
+                                </div>  
                             </div>
                             <!-- End Single Review -->
                         </div>
@@ -274,25 +274,19 @@
                         </div>
                         <!-- End RAting Area -->
                         <div class="review__box">
-@*                             @foreach (var item in Model)
-                            {
-                            <form id="review-form" method="post">
-                                <div class="single-review-form">
-                                    <div class="review-box name">
-                                        <input type="text" placeholder="Type your name">
-                                        <input type="email" placeholder="Type your email">
+                            <div class="review__box">
+                                    <form method="post">
+                                    <div class="single-review-form">
+                                        <div class="review-box message">
+                                            <textarea name="commentText" placeholder="Write your comment"></textarea>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="single-review-form">
-                                    <div class="review-box message">
-                                        <textarea placeholder="Write your review"></textarea>
+                                    <div class="review-btn">
+                                        <button type="submit" class="fv-btn">Submit Comment</button>
                                     </div>
-                                </div>
-                                <div class="review-btn">
-                                    <a class="fv-btn" href="#">submit review</a>
-                                </div>
-                            </form>
-                            } *@
+                                </form>
+                            </div>
+
                         </div>
                     </div>
                     <!-- End Single Content -->

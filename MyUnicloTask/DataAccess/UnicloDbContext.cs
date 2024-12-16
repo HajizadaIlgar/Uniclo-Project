@@ -8,9 +8,11 @@ namespace Ab108Uniqlo.DataAccess
     {
         public DbSet<Slider> Sliders { get; set; }
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<Currency> Currencies { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImages> ProductImage { get; set; }
         public DbSet<ProductRating> ProductRatings { get; set; }
+        public DbSet<ProductComment> ProductComments { get; set; }
         public UnicloDbContext(DbContextOptions opt) : base(opt) { }
     }
 }

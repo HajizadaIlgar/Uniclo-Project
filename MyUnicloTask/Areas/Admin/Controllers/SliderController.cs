@@ -14,7 +14,7 @@ namespace AB108Uniqlo.Areas.Admin.Controllers;
 
 public class SliderController(UnicloDbContext _context, IWebHostEnvironment _env) : Controller
 {
-    public async Task<IActionResult> Index(int? page = 1, int? take = 4)
+    public async Task<IActionResult> Index(int? page = 1, int? take = 1)
     {
         ViewBag.Pagination = new PaginationItemsVM(await _context.Sliders.CountAsync(), take.Value, page.Value);
         return View(await _context.Sliders.Skip((page.Value - 1) * take.Value).Take(take.Value).ToListAsync());

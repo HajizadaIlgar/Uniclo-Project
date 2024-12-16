@@ -13,6 +13,7 @@ public class ProductCreateVM
     [Range(0, 100)]
     public int Discount { get; set; }
     public int BrandId { get; set; }
+    public int CurrencyId { get; set; }
     public IFormFile File { get; set; }
     public ICollection<IFormFile>? OtherFile { get; set; }
 

@@ -77,6 +77,45 @@ public class AccountController(UserManager<AppUser> _userManager, SignInManager<
         }
         return Ok();
     }
+    //public async Task<IActionResult> ForgetPassword()
+    //{
+    //    return View();
+    //}
+    //[HttpPost]
+    //public async Task<IActionResult> ForgetPassword(string email)
+    //{
+    //    var user = await _userManager.FindByEmailAsync(email);
+    //    if (user == null) return View("EmailNotFound");
+
+    //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+    //    var resetLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+
+    //    // E-poçtu göndər
+    //    await _emailSender.SendEmailAsync(user.Email, "Reset Password", $"Click here: {resetLink}");
+    //    return View("LinkSent");
+    //}
+    //[HttpGet]
+    //public IActionResult ResetPassword(string token, string email)
+    //{
+    //    if (token == null || email == null) return BadRequest();
+    //    return View(new ResetPasswordViewModel { Token = token, Email = email });
+    //}
+
+    //[HttpPost]
+    //public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    //{
+    //    if (!ModelState.IsValid) return View(model);
+
+    //    var user = await _userManager.FindByEmailAsync(model.Email);
+    //    if (user == null) return View("EmailNotFound");
+
+    //    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+    //    if (result.Succeeded) return View("PasswordResetSuccess");
+
+    //    foreach (var error in result.Errors) ModelState.AddModelError("", error.Description);
+    //    return View(model);
+    //}
+
     public IActionResult Login()
     {
         return View();

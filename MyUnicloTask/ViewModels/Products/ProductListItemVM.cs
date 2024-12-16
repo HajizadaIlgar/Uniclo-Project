@@ -11,6 +11,7 @@ namespace Ab108Uniqlo.ViewModels.Products
         public bool IsStock { get; set; }
         public string CoverImage { get; set; }
         public int BrandId { get; set; }
+        public int CurrencyId { get; set; }
         public ICollection<ProductImages>? Images { get; set; }
 
     }

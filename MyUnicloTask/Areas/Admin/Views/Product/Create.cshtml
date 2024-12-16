@@ -60,6 +60,13 @@
                     </select>
                     <span class="text-danger" asp-validation-for="BrandId"></span>
                 </div>
+                <div class="col">
+                    <label asp-for="CurrencyId">Currency</label>
+                    <select class="form-control" asp-for="CurrencyId" asp-items='new SelectList(ViewBag.Currency,"Id","Name")'>
+                        <option>Select Currencies</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="CurrencyId"></span>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

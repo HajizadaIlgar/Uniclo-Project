@@ -30,6 +30,16 @@
                             <input asp-for="RememberMe">
                             <span> Remember me</span>
                         </div>
+                        <div class="mb-3 border-bottom">
+                            <div class="row">
+                                <div class="col-6">
+                                        <a asp-controller="Account" asp-action="ForgetPassword" class="float-end btnsmall btn-outline-primary">Forget Passsword</a>
+                                </div>
+                                <div class="col-6">
+                                        <a class="float-end btnsmall btn-outline-primary">Forget Username</a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
                         <div class="htc__login__btn mt--30">
                             <button class="btn btn-danger">Login</button>>

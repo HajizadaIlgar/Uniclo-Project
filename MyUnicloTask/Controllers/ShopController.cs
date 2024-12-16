@@ -1,4 +1,5 @@
 ﻿using Ab108Uniqlo.DataAccess;
+using Ab108Uniqlo.Models;
 using Ab108Uniqlo.ViewModels.Baskets;
 using Ab108Uniqlo.ViewModels.Brands;
 using Ab108Uniqlo.ViewModels.Products;
@@ -67,7 +68,7 @@ public class ShopController(UnicloDbContext _contex) : Controller
         }
         string data = JsonSerializer.Serialize(basket);
         HttpContext.Response.Cookies.Append("basket", data);
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Shop");
     }
 
     public async Task<IActionResult> GetBasket(int id)
@@ -131,12 +132,47 @@ public class ShopController(UnicloDbContext _contex) : Controller
     }
     public async Task<IActionResult> BasketDelete(int? id)
     {
-        if (id is null) return BadRequest();
-        var dats = await _contex.Products.Where(x => x.Id == id)
-            .FirstOrDefaultAsync();
-        if (dats is null) return NotFound();
-        _contex.Products.Remove(dats);
+        var basket = getBasket();
+        var data = basket.FirstOrDefault(x => x.Id == id);
+        if (data is null) return BadRequest();
+        basket.Remove(data);
+        var updateBasket = JsonSerializer.Serialize(basket);
+        HttpContext.Response.Cookies.Append("basket", updateBasket);
+        if (basket.Any())
+        {
+            HttpContext.Response.Cookies.Delete(updateBasket);
+        }
+        return RedirectToAction(nameof(Index));
+    }
+    public async Task<IActionResult> CommentIndex(int? id)
+    {
+        return View(await _contex.ProductComments.Where(x => x.Id == id).ToListAsync());
+    }
+    public async Task<IActionResult> CommentCreate()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> CommentCreate(int? productId, string commentText)
+    {
+
+        if (!productId.HasValue) return BadRequest();
+        string userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
+        if (!await _contex.Products.AnyAsync(p => p.Id == productId)) return NotFound();
+        var commenting = await _contex.ProductComments.Where(x => x.ProductId == productId && x.UserId == userId).FirstOrDefaultAsync();
+        if (commenting is null)
+        {
+            await _contex.ProductComments.AddAsync(new ProductComment
+            {
+                CreatedTime = DateTime.Now,
+                IsDeleted = false,
+                UserId = userId,
+                ProductId = productId.Value,
+                Content = commentText,
+            });
+        }
         await _contex.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
+
 }

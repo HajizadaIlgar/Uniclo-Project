@@ -10,7 +10,7 @@ namespace Ab108Uniqlo.Controllers
     public class HomeController(UnicloDbContext _contex) : Controller
     {
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? take = 1, int? page = 1)
         {
             HomeVM homeVM = new HomeVM();
             homeVM.Sliders = await _contex.Sliders.Where(x => !x.IsDeleted)
@@ -44,11 +44,11 @@ namespace Ab108Uniqlo.Controllers
             return View(homeVM);
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
-            return View();
+            return View(await _contex.Brands.ToListAsync());
         }
-        public IActionResult AccesDenied()
+        public IActionResult AccessDenied()
         {
             return View();
         }

@@ -1,5 +1,4 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
+﻿@model List<Brand>
 @{
     ViewData["Title"] = "About";
 }
@@ -8,7 +7,7 @@
 </head>
 <body>
         <!-- Start Bradcaump area -->
-        <div class="ht__bradcaump__area" style="background: rgba(0, 0, 0, 0) url(images/bg/2.jpg) no-repeat scroll center center / cover ;">
+        <div class="ht__bradcaump__area" style="background: rgba(0, 0, 0, 0) url(~/assets/images/bg/2.jpg) no-repeat scroll center center / cover ;">
             <div class="ht__bradcaump__wrap">
                 <div class="container">
                     <div class="row">
@@ -51,7 +50,7 @@
                     <div class="col-md-12 col-lg-6 col-sm-12">
                         <div class="video__wrap bg--3" data--black__overlay="5">
                             <div class="video__inner">
-                                <a class="video__trigger video-popup" href="https://www.youtube.com/watch?v=cDDWvj_q-o8">
+                            <a class="video__trigger video-popup" href="https://www.youtube.com/watch?v=ri46c_0Kgvc">
                                     <i class="zmdi zmdi-play"></i>
                                 </a>
                             </div>
@@ -256,32 +255,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="brand__list">
-                            <li>
-                                <a href="#">
-                                    <img src="images/brand/1.png" alt="brand images">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="images/brand/2.png" alt="brand images">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="images/brand/3.png" alt="brand images">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="images/brand/4.png" alt="brand images">
-                                </a>
-                            </li>
-                            <li class="hidden-sm">
-                                <a href="#">
-                                    <img src="images/brand/5.png" alt="brand images">
-                                </a>
-                            </li>
-                        </ul>
+                            @foreach (var item in Model)
+                                    {
+                                                <li>
+                                                    <a asp-controller="Home" asp-action="Index">
+                                                        <p>@item.Name</p>
+                                                    </a>
+                                                </li>
+                                    }
+                    </ul>
                     </div>
                 </div>
             </div>

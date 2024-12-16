@@ -1,10 +1,11 @@
-﻿namespace Ab108Uniqlo.Models
-{
-    public class ProductComment
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
+﻿namespace Ab108Uniqlo.Models;
 
-        public string Description { get; set; }
-    }
+public class ProductComment : BaseEntity
+{
+    public AppUser? User { get; set; }
+    public string? UserId { get; set; }
+    public Product? Product { get; set; }
+    public int ProductId { get; set; }
+    public int Rating { get; set; }
+    public string Content { get; set; }
 }

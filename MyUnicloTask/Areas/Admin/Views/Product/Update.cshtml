@@ -50,8 +50,11 @@
                     {
                         <input class="d-none del-img-input" type="checkbox" value="@item" name="imgNames" id="@item" />
                         <label class="del-img-label" for="@item"><img id="meks" width="80px" src="~/imgs/products/@item" /></label>
+                    @if (item is not null)
+                    {
+                            <button asp-action="DeleteImgs" asp-controller="Product" asp-route-id="@Model.Id" class="btn btn-danger">Delete</button>
                     }
-                    <button asp-action="DeleteImgs" asp-controller="Product" asp-route-id="@Model.Id" class="btn btn-danger">Delete</button>
+                    }
                 </form>
                 <br />
                 <label asp-for="OtherFiles">Other images</label>
@@ -87,6 +90,13 @@
                         <option disabled selected>Select brand</option>
                     </select>
                     <span class="text-danger" asp-validation-for="BrandId"></span>
+                </div>
+                <div class="col">
+                    <label asp-for="CurrencyId">Currencies</label>
+                    <select class="form-control" asp-for="CurrencyId" asp-items='new SelectList(ViewBag.Currency,"Id","Name")'>
+                        <option disabled selected>Select Currency</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="CurrencyId"></span>
                 </div>
             </div>
             <button onclick="$('#islepls').submit()" type="submit" class="btn btn-primary my-2">Submit</button>

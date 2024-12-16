@@ -28,6 +28,7 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
     public async Task<IActionResult> Create()
     {
         ViewBag.Categories = await _contex.Brands.Where(x => !x.IsDeleted).ToListAsync();
+        ViewBag.Currency = await _contex.Currencies.Where(x => !x.IsDeleted).ToListAsync();
         return View();
     }
     [HttpPost]
@@ -83,7 +84,8 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
             SellPrice = vm.SellPrice,
             CostPrice = vm.CostPrice,
             Discount = vm.Discount,
-            BrandId = vm.BrandId
+            BrandId = vm.BrandId,
+            CurrencyId = vm.CurrencyId,
         };
 
         if (vm.File != null)
@@ -127,6 +129,7 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
                Description = x.Description,
                CostPrice = x.CostPrice,
                BrandId = x.BrandId ?? 0,
+               CurrencyId = x.CurrencyId ?? 0,
                FileUrl = x.CoverImage,
                Discount = x.Discount,
                Quantity = x.Quantity,
@@ -134,6 +137,7 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
            }).FirstOrDefaultAsync();
         if (data is null) return NotFound();
         ViewBag.Categories = await _contex.Brands.Where(x => !x.IsDeleted).ToListAsync();
+        ViewBag.Currency = await _contex.Currencies.Where(x => !x.IsDeleted).ToListAsync();
         return View(data);
     }
     [HttpPost]
@@ -161,6 +165,7 @@ public class ProductController(IWebHostEnvironment _env, UnicloDbContext _contex
             vm.Description = data.Description;
             vm.CostPrice = data.CostPrice;
             vm.BrandId = data.BrandId ?? 0;
+            vm.CurrencyId = data.CurrencyId ?? 0;
             vm.FileUrl = data.CoverImage;
             vm.Discount = data.Discount;
             vm.Quantity = data.Quantity;

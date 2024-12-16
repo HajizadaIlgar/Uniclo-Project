@@ -381,7 +381,7 @@ button {
 
     .login input + input {
         margin-bottom: 20px;
-        margin-top: 40px;
+        margin-top: 20px;
     }
 
 .tabs__checkbox span.forget a {

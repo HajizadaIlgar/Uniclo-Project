@@ -19,7 +19,10 @@ public class Product : BaseEntity
     public int Discount { get; set; }
     public int? BrandId { get; set; }
     public Brand? Brand { get; set; }
+    public Currency? Currency { get; set; }
+    public int? CurrencyId { get; set; }
     public ICollection<ProductImages>? Images { get; set; }
     public ICollection<ProductRating>? ProductRatings { get; set; }
+    public ICollection<ProductComment>? ProductComments { get; set; }
 
 }

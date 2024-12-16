@@ -1,0 +1,89 @@
+﻿@{
+    Layout = null;
+}
+<style>
+    /* General Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Main Container */
+    .container {
+        text-align: center;
+        max-width: 600px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Error Code */
+    .error-code {
+        font-size: 96px;
+        color: #dc3545; /* Red Color */
+        margin-bottom: 10px;
+    }
+
+    /* Error Message */
+    .error-message {
+        font-size: 32px;
+        margin-bottom: 20px;
+        color: #6c757d;
+    }
+
+    /* Description Text */
+    .description {
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        color: #555;
+    }
+
+    /* Back to Homepage Button */
+    .back-home {
+        text-decoration: none;
+        color: #fff;
+        background-color: #007bff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+        .back-home:hover {
+            background-color: #0056b3;
+        }
+
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Error</title>
+</head>
+<body>
+    <div class="container">
+        <img style="width:60px;  border-radius: 50%;" src="~/imgs/products/hitl.webp" />
+        <p class="description">
+          Bayraaaaaaaaaaaa
+        </p>
+        <a style="background-color:red" asp-controller="Account" asp-action="Register" class="back-home">Boyuk-Bayir</a>
+        <a asp-controller="Account" asp-action="Login" class="back-home">Kicik-Bayir</a>
+    </div>
+</body>
+</html>

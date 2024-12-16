@@ -14,6 +14,7 @@ public class ProductUpdateVM
     [Range(0, 100)]
     public int Discount { get; set; }
     public int BrandId { get; set; }
+    public int CurrencyId { get; set; }
     public string? FileUrl { get; set; }
     public IFormFile? File { get; set; }
     public IEnumerable<string>? OtherFilesUrl { get; set; }

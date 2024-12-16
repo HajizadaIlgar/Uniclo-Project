@@ -58,7 +58,7 @@ public class BrandController(UnicloDbContext _contex, IWebHostEnvironment _env) 
         return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> Delete(int? id, BrandCreateVM data)
+    public async Task<IActionResult> Delete(int? id)
     {
         if (id is null) return BadRequest();
         var searc_id = await _contex.Brands.Where(x => x.Id == id).FirstOrDefaultAsync();
