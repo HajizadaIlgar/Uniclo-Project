@@ -93,7 +93,10 @@ public class ShopController(UnicloDbContext _contex) : Controller
             ViewBag.Rating = 5;
         }
         await _contex.SaveChangesAsync();
-        return View(datas);
+        DetailVM vm = new DetailVM();
+        vm.Product = datas;
+        vm.Comments = await _contex.ProductComments.Where(x => x.ProductId == id).ToListAsync();
+        return View(vm);
     }
     public async Task<IActionResult> Rate(int? productId, int rate = 1)
     {
@@ -146,7 +149,7 @@ public class ShopController(UnicloDbContext _contex) : Controller
     }
     public async Task<IActionResult> CommentIndex(int? id)
     {
-        return View(await _contex.ProductComments.Where(x => x.Id == id).ToListAsync());
+        return View(await _contex.ProductComments.Where(x => x.ProductId == id).ToListAsync());
     }
     public async Task<IActionResult> CommentCreate()
     {
@@ -159,20 +162,25 @@ public class ShopController(UnicloDbContext _contex) : Controller
         if (!productId.HasValue) return BadRequest();
         string userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
         if (!await _contex.Products.AnyAsync(p => p.Id == productId)) return NotFound();
-        var commenting = await _contex.ProductComments.Where(x => x.ProductId == productId && x.UserId == userId).FirstOrDefaultAsync();
-        if (commenting is null)
+
+        await _contex.ProductComments.AddAsync(new ProductComment
         {
-            await _contex.ProductComments.AddAsync(new ProductComment
-            {
-                CreatedTime = DateTime.Now,
-                IsDeleted = false,
-                UserId = userId,
-                ProductId = productId.Value,
-                Content = commentText,
-            });
-        }
+            CreatedTime = DateTime.Now,
+            IsDeleted = false,
+            UserId = userId,
+            ProductId = productId.Value,
+            Content = commentText,
+        });
         await _contex.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
-
+    public async Task<IActionResult> CommentDelete(int? id)
+    {
+        if (id == null) return BadRequest();
+        var data = await _contex.ProductComments.Where(x => x.Id == id).FirstOrDefaultAsync();
+        if (data is null) return BadRequest();
+        _contex.Remove(data);
+        await _contex.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
 }

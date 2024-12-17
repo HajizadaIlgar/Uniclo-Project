@@ -6,11 +6,11 @@ using Ab108Uniqlo.Views.Account.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Ab108Uniqlo.Controllers;
 
-public class AccountController(UserManager<AppUser> _userManager, SignInManager<AppUser> _signInManager, RoleManager<IdentityRole> _roleManager, IEmailService _service) : Controller
+public class AccountController(UserManager<AppUser> _userManager, SignInManager<AppUser> _signInManager, RoleManager<IdentityRole> _roleManager, IEmailService _service, IMemoryCache _cache) : Controller
 {
     public async Task<IActionResult> Send()
     {
@@ -77,44 +77,36 @@ public class AccountController(UserManager<AppUser> _userManager, SignInManager<
         }
         return Ok();
     }
-    //public async Task<IActionResult> ForgetPassword()
-    //{
-    //    return View();
-    //}
-    //[HttpPost]
-    //public async Task<IActionResult> ForgetPassword(string email)
-    //{
-    //    var user = await _userManager.FindByEmailAsync(email);
-    //    if (user == null) return View("EmailNotFound");
+    public async Task<IActionResult> ForgetPassword()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> ForgetPassword(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null) return View("EmailNotFound");
 
-    //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-    //    var resetLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        _service.SendEmailConfirmationAsync(user.Email!, user.UserName!, token);
+        return Content("LinkSent");
+    }
+    [HttpGet]
+    public IActionResult ResetPassword()
+    {
+        return View();
+    }
 
-    //    // E-poçtu göndər
-    //    await _emailSender.SendEmailAsync(user.Email, "Reset Password", $"Click here: {resetLink}");
-    //    return View("LinkSent");
-    //}
-    //[HttpGet]
-    //public IActionResult ResetPassword(string token, string email)
-    //{
-    //    if (token == null || email == null) return BadRequest();
-    //    return View(new ResetPasswordViewModel { Token = token, Email = email });
-    //}
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(string email, string token, string pass)
+    {
+        if (!ModelState.IsValid) return View();
 
-    //[HttpPost]
-    //public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-    //{
-    //    if (!ModelState.IsValid) return View(model);
-
-    //    var user = await _userManager.FindByEmailAsync(model.Email);
-    //    if (user == null) return View("EmailNotFound");
-
-    //    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-    //    if (result.Succeeded) return View("PasswordResetSuccess");
-
-    //    foreach (var error in result.Errors) ModelState.AddModelError("", error.Description);
-    //    return View(model);
-    //}
+        var entity = await _userManager.FindByEmailAsync(email);
+        if (entity == null) return NotFound();
+        var reset = await _userManager.ResetPasswordAsync(entity, token.Replace(' ', '+'), pass);
+        return RedirectToAction(nameof(Register));
+    }
 
     public IActionResult Login()
     {
@@ -167,21 +159,18 @@ public class AccountController(UserManager<AppUser> _userManager, SignInManager<
         await _signInManager.SignOutAsync();
         return RedirectToAction(nameof(Login));
     }
-    public async Task<IActionResult> VerifyEmail(string token, string user)
+    public async Task<IActionResult> VerifyEmail(int code, string user)
     {
-        var entitiy = await _userManager.FindByNameAsync(user);
-        if (entitiy is null) return BadRequest();
-        var result = await _userManager.ConfirmEmailAsync(entitiy, token.Replace(' ', '+'));
-        if (result.Succeeded)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in result.Errors)
-            {
-                sb.Append(item.ToString());
-                return Content(sb.ToString());
-            }
-        }
-        await _signInManager.SignInAsync(entitiy, true);
-        return RedirectToAction(nameof(Login));
+        var entity = await _userManager.FindByNameAsync(user);
+        if (entity is null) return BadRequest();
+        int? cacheCode = _cache.Get<int>(entity.Id);
+        if (!cacheCode.HasValue || cacheCode != code)
+            return BadRequest();
+        entity.EmailConfirmed = true;
+        await _userManager.UpdateAsync(entity);
+        _cache.Remove(entity.Id);
+        await _signInManager.SignInAsync(entity, true);
+        return RedirectToAction("Index", "Home");
+
     }
 }

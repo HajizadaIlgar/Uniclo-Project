@@ -26,7 +26,7 @@ namespace Ab108Uniqlo.Services.Implements
             MailAddress to = new(receiver);
             MailMessage message = new MailMessage(_from, to);
             message.Subject = "Confirm your Email";
-            string url = Context.Request.Scheme + "://" + Context.Request.Host + "/Account/VeritifyEmail?token="
+            string url = Context.Request.Scheme + "://" + Context.Request.Host + "/Account/VerifyEmail?token="
                  + token + "&user" + name;
             message.Body = EmailTemplates.VerifyEmail.Replace("__$name", name).Replace("__$link", url);
             message.IsBodyHtml = true;

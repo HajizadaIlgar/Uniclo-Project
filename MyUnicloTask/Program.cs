@@ -17,7 +17,7 @@ namespace Ab108Uniqlo
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<UnicloDbContext>(opt =>
             {
-                opt.UseSqlServer(builder.Configuration.GetConnectionString("mssql"));
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("class"));
             });
             builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
             {

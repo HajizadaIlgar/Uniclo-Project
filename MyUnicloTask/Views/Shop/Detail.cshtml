@@ -1,4 +1,4 @@
-﻿@model Product
+﻿@model DetailVM
 @{
     ViewData["Title"] = "Detail";
     int img_tab = 2;
@@ -32,7 +32,7 @@
                     <!-- Start Small images -->
                     <ul class="nav product__small__images" role="tablist">
                        
-                      @foreach (var item in Model.Images?.Select(x=>x.ImageUrl) ?? [])
+                      @foreach (var item in Model.Product.Images?.Select(x=>x.ImageUrl) ?? [])
                         {
                             <li role="presentation" class="pot-small-img">
                                 <a class="active" href="#img-tab-@img_tab++" role="tab" data-bs-toggle="tab">
@@ -47,7 +47,7 @@
                             <div role="tabpanel" class="tab-pane active salam" id="img-tab-4">
                             </div>
                             <a class="active" href="#" role="tab" data-bs-toggle="tab">
-                                <img src="~/imgs/products/@Model.CoverImage" alt="small-image">
+                                <img src="~/imgs/products/@Model.Product.CoverImage" alt="small-image">
                             </a>
                         </div>
                     </div>
@@ -56,43 +56,43 @@
             <div class="col-md-12 col-lg-6 col-sm-12 smt-30 xmt-30">
                 <div class="htc__product__details__inner">
                     <div class="pro__detl__title">
-                        <h2>@Model.Name</h2>
+                        <h2>@Model.Product.Name</h2>
                     </div>
                         @if (User.Identity?.IsAuthenticated ?? false)
                         {
                             <form asp-action="Rate">
-                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <input type="hidden" name="productId" value="@Model.Product.Id" />
                             <input type="number" min="1" max="5" value="@ViewBag.Rating"/>
                             <button class="btn">Rate</button>
                             </form>
                         }
                     <div class="pro__dtl__rating">
                         <ul class="pro__rating">
-                            @if (Model.ProductRatings.Count>0)
+                            @if (Model.Product.ProductRatings.Count > 0)
                             {
-                            @for (int i = 0; i < @Math.Ceiling(Model.ProductRatings.Average(x => x.RatingRate)); i++)
+                                @for (int i = 0; i < @Math.Ceiling(Model.Product.ProductRatings.Average(x => x.RatingRate)); i++)
                             {
                             <li><span class="ti-star"></span></li>                                
                             }                                
                             }
                         </ul>
-                        <span class="rat__qun">(Based on 0 Ratings @Model.ProductRatings.Count Rating)</span>
+                        <span class="rat__qun">(Based on 0 Ratings @Model.Product.ProductRatings.Count Rating)</span>
                     </div>
                     <div class="pro__details">
-                        <p>@Model.Description</p>
+                        <p>@Model.Product.Description</p>
                     </div>
                     <ul class="pro__dtl__prize">
                         @{
-                            var currencySymbol = Model.Currency?.Name == "USD" ? "$" : "₼"; 
+                            var currencySymbol = Model.Product.Currency?.Name == "USD" ? "$" : "₼";
                         }
-                        @if (Model.Discount > 0)
+                        @if (Model.Product.Discount > 0)
                         {
-                            <li class="old__prize">@Model.SellPrice @currencySymbol</li>
-                            <li>@(Model.SellPrice - (Model.SellPrice * Model.Discount / 100)) @currencySymbol</li>
+                            <li class="old__prize">@Model.Product.SellPrice @currencySymbol</li>
+                            <li>@(Model.Product.SellPrice - (Model.Product.SellPrice * Model.Product.Discount / 100)) @currencySymbol</li>
                         }
                         else
                         {
-                            <li class="new__prize">@Model.SellPrice @currencySymbol</li>
+                            <li class="new__prize">@Model.Product.SellPrice @currencySymbol</li>
                         }
                     </ul>
 
@@ -128,7 +128,7 @@
                         </div>
                     </div>
                     <ul class="pro__dtl__btn">
-                        <li class="buy__now__btn"><a asp-controller="Shop" asp-action="AddBasket" asp-route-id="@Model.Id">Add Basket</a></li>
+                        <li class="buy__now__btn"><a asp-controller="Shop" asp-action="AddBasket" asp-route-id="@Model.Product.Id">Add Basket</a></li>
                         <li><a href="#"><span class="ti-heart"></span></a></li>
                         <li><a href="#"><span class="ti-email"></span></a></li>
                     </ul>
@@ -209,16 +209,17 @@
                             <!-- Start Single Review -->
                             <div class="pro__review">
                                 <div class="review__thumb">
-                                    <img src="images/review/1.jpg" alt="review images">
+                                    @if (Model.Product.ProductComments?.Count >0 )
+                                    {
+                                    <img style="width:60px;  border-radius: 50%;" src="~/imgs/products/hitl.webp" alt="review images">                                        
+                                    }
                                 </div>
                                 <div class="review__details">
-                                    @foreach (var item in Model.ProductComments)
+                                    @foreach (var item in Model.Comments)
                                         {
                                             <div class="review__info">
-                                                <h4><a href="#">@item.Content</a></h4>
                                                 <div class="rating__send">
-                                                    <a href="#"><i class="zmdi zmdi-mail-reply"></i></a>
-                                                    <a href="#"><i class="zmdi zmdi-close"></i></a>
+                                                <a asp-controller="Shop" asp-action="CommentDelete" asp-route-id="@item.Id"><i class="zmdi zmdi-close"></i></a>
                                                 </div>
                                             </div>
                                                 <div class="review__date">
@@ -231,58 +232,18 @@
                             <!-- End Single Review -->
                         </div>
                         <!-- Start RAting Area -->
-                        <div class="rating__wrap">
-                            <h2 class="rating-title">Write  A review</h2>
-                            <h4 class="rating-title-2">Your Rating</h4>
-                            <div class="rating__list">
-                                <!-- Start Single List -->
-                                <ul class="rating">
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                </ul>
-                                <!-- End Single List -->
-                                <!-- Start Single List -->
-                                <ul class="rating">
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                </ul>
-                                <!-- End Single List -->
-                                <!-- Start Single List -->
-                                <ul class="rating">
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                </ul>
-                                <!-- End Single List -->
-                                <!-- Start Single List -->
-                                <ul class="rating">
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                </ul>
-                                <!-- End Single List -->
-                                <!-- Start Single List -->
-                                <ul class="rating">
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                    <li><i class="zmdi zmdi-star-half"></i></li>
-                                </ul>
-                                <!-- End Single List -->
-                            </div>
-                        </div>
+                      
                         <!-- End RAting Area -->
                         <div class="review__box">
                             <div class="review__box">
-                                    <form method="post">
+                                <form method="post" asp-action="CommentCreate" asp-controller="Shop" asp-route-productId="@Model.Product.Id">
                                     <div class="single-review-form">
                                         <div class="review-box message">
-                                            <textarea name="commentText" placeholder="Write your comment"></textarea>
+                                            <input style="border-radius:10%" type="text" id="contentInput" name="commentText" />
                                         </div>
                                     </div>
                                     <div class="review-btn">
-                                        <button type="submit" class="fv-btn">Submit Comment</button>
+                                        <button type="submit" class="btn btn-success">Send Comment</button>
                                     </div>
                                 </form>
                             </div>
